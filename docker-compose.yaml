@@ -1,0 +1,46 @@
+# version: '3.8'
+
+services:
+  spark-master:
+    build: .
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    networks:
+      - spark-network
+  
+  spark-worker:
+    build: .
+    #container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    # ports:
+    #   - "8081:8081"
+    depends_on:
+      - spark-master
+    networks:
+      - spark-network
+
+  jupyter:
+    build: .
+    container_name: jupyter
+    environment:
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    ports:
+      - "8888:8888"   # Jupyter Notebook
+    volumes:
+      - ./notebooks:/notebooks
+      - ./data:/data
+    depends_on:
+      - spark-master
+      - spark-worker
+    networks:
+      - spark-network
+
+networks:
+  spark-network:
+    driver: bridge

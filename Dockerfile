@@ -21,6 +21,8 @@ ENV PATH=${CONDA_HOME}/bin:$PATH
 # Update conda and install Jupyter
 RUN conda update -n base -c defaults conda -y
 RUN conda install -y jupyter
+# RUN rm -f ~/.jupyter/jupyter_notebook_config.py
+# RUN rm -f ~/.jupyter/jupyter_notebook_config.json
 
 
 # # Spark variables
@@ -53,5 +55,5 @@ RUN chmod +x /entrypoint.sh
 # Use the entrypoint script as the default command
 ENTRYPOINT ["/entrypoint.sh"]
 
-# CMD ["bin/bash"]
+
 
