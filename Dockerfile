@@ -19,8 +19,15 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aar
 ENV PATH=${CONDA_HOME}/bin:$PATH
 
 # Update conda and install Jupyter
-RUN conda update -n base -c defaults conda -y
-RUN conda install -y jupyter
+RUN conda update -n base -c defaults conda -y && \
+    conda create --name spark_env python=3.11.4 && \
+    conda init && \
+    . ~/.bashrc && \
+    conda activate spark_env
+
+COPY ./requirements.txt ./requirements.txt
+RUN pip install -r requirements.txt
+# RUN conda install -y jupyter
 # RUN rm -f ~/.jupyter/jupyter_notebook_config.py
 # RUN rm -f ~/.jupyter/jupyter_notebook_config.json
 
@@ -31,10 +38,7 @@ ENV HADOOP_VERSION=3
 ENV SCALA_VERSION=2.13
 ENV SPARK_HOME=/opt/spark
 ENV PATH=${SPARK_HOME}/bin:${SPARK_HOME}/sbin:$PATH
-# ENV SPARK_MASTER_URL="spark://spark-master:7077"
-# ENV SPARK_MASTER_HOST spark-master
-# ENV SPARK_MASTER_PORT 7077
-# ENV PYSPARK_PYTHON python3
+
 
 
 RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-scala${SCALA_VERSION}.tgz" -O /tmp/spark.tgz && \
