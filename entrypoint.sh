@@ -6,9 +6,17 @@ set -e
 # If SPARK_MODE is "worker", start Spark worker.
 # Otherwise, default to running Jupyter Notebook.
 
+# Ensure that the conda base is loaded.
+source ${CONDA_HOME}/bin/activate spark_env
+
+# Now run your commands in the activated environment.
+exec "$@"
+
+
 if [ "$SPARK_MODE" = "master" ]; then
   echo "Starting Spark Master..."
   $SPARK_HOME/sbin/start-master.sh
+
   # Keep the container running by tailing the master logs
   tail -F $SPARK_HOME/logs/*
 elif [ "$SPARK_MODE" = "worker" ]; then
@@ -18,6 +26,7 @@ elif [ "$SPARK_MODE" = "worker" ]; then
   fi
   echo "Starting Spark Worker connecting to $SPARK_MASTER_URL..."
   $SPARK_HOME/sbin/start-worker.sh $SPARK_MASTER_URL
+
   # Keep the container running by tailing the worker logs
   tail -F $SPARK_HOME/logs/*
 else

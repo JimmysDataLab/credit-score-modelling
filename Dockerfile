@@ -1,10 +1,20 @@
 # Base Image
 FROM ubuntu:22.04
 
+
+
 # Install essential binaries
 RUN apt-get update && \
-    apt-get install -y wget vim bzip2 ca-certificates \ 
-    curl git build-essential libssl-dev openjdk-11-jdk && \
+    apt-get install -y \
+    wget \
+#    vim \
+#    bzip2 \
+#    ca-certificates \
+#    curl \
+#    git \
+#    build-essential \
+#    libssl-dev \
+    openjdk-11-jdk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -17,16 +27,20 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aar
 
 # Add conda to PATH
 ENV PATH=${CONDA_HOME}/bin:$PATH
+COPY ./requirements.txt ./requirements.txt
+
 
 # Update conda and install Jupyter
-RUN conda update -n base -c defaults conda -y && \
-    conda create --name spark_env python=3.11.4 && \
-    conda init && \
+RUN conda init --all && \
     . ~/.bashrc && \
-    conda activate spark_env
+    conda update -n base -c defaults conda -y && \
+    conda create --name spark_env python=3.11.4 && \
+    conda activate spark_env && \
+    pip install -r requirements.txt
 
-COPY ./requirements.txt ./requirements.txt
-RUN pip install -r requirements.txt
+
+
+# RUN pip install -r -y requirements.txt
 # RUN conda install -y jupyter
 # RUN rm -f ~/.jupyter/jupyter_notebook_config.py
 # RUN rm -f ~/.jupyter/jupyter_notebook_config.json
