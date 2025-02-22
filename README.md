@@ -44,4 +44,4 @@ Using bootstrapping to assess prediction uncertainty involves:
 1. **Resampling** your training data to create multiple bootstrapped datasets.
 2. **Training** a separate model on each bootstrapped sample.
 3. **Aggregating** the predictions for a specific input across all models.
-4. **Computing quantiles** (e.g., the 2.5th and 97.5th percentiles) to form a co
+4. **Computing quantiles** (e.g., the 2.5th and 97.5th percentiles)
