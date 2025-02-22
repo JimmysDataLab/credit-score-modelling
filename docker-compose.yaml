@@ -30,6 +30,8 @@ services:
     container_name: jupyter
     environment:
       - SPARK_MASTER_URL=spark://spark-master:7077
+      - TRAIN_PATH=/mnt/train
+      - TEST_PATH=/mnt/test
     ports:
       - "8888:8888"   # Jupyter Notebook
     volumes:

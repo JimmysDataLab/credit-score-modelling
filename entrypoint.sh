@@ -30,19 +30,14 @@ elif [ "$SPARK_MODE" = "worker" ]; then
   # Keep the container running by tailing the worker logs
   tail -F $SPARK_HOME/logs/*
 else
-  echo "Starting Jupyter Notebook..."
-  # Launch Jupyter Notebook accessible on port 8888
-  #jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root
-  # rm -f ~/.jupyter/jupyter_notebook_config.py
-  #jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser --allow-root # --NotebookApp.token='' --NotebookApp.password=''
-  #export TOKEN=$(python -c "import secrets; print(secrets.token_hex(16))")
-  #export PASSWD=$(python -c "from jupyter_server.auth import passwd; print(passwd())")
+  echo "Downloading Raw Data..."
+  python /scripts/stage_data.py
 
+  echo "Starting Jupyter Notebook..."
   jupyter notebook \
   --ip=0.0.0.0 \
   --port=8888 \
   --no-browser \
   --allow-root \
-#  --ServerApp.token=$TOKEN \
-#  --ServerApp.password=$PASSWD
+
 fi

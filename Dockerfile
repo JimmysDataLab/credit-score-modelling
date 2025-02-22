@@ -1,19 +1,11 @@
 # Base Image
 FROM ubuntu:22.04
-
-
+COPY . .
 
 # Install essential binaries
 RUN apt-get update && \
     apt-get install -y \
     wget \
-#    vim \
-#    bzip2 \
-#    ca-certificates \
-#    curl \
-#    git \
-#    build-essential \
-#    libssl-dev \
     openjdk-11-jdk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -27,7 +19,7 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aar
 
 # Add conda to PATH
 ENV PATH=${CONDA_HOME}/bin:$PATH
-COPY ./requirements.txt ./requirements.txt
+#COPY ./requirements.txt ./requirements.txt
 
 
 # Update conda and install Jupyter
@@ -36,17 +28,10 @@ RUN conda init --all && \
     conda update -n base -c defaults conda -y && \
     conda create --name spark_env python=3.11.4 && \
     conda activate spark_env && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt \
+    # mkdir data
 
-
-
-# RUN pip install -r -y requirements.txt
-# RUN conda install -y jupyter
-# RUN rm -f ~/.jupyter/jupyter_notebook_config.py
-# RUN rm -f ~/.jupyter/jupyter_notebook_config.json
-
-
-# # Spark variables
+# Spark variables
 ENV SPARK_VERSION=3.5.4
 ENV HADOOP_VERSION=3
 ENV SCALA_VERSION=2.13
@@ -67,7 +52,7 @@ RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${
 #  - 8888: Jupyter Notebook
 EXPOSE 7077 8080 8081 8888
 
-COPY entrypoint.sh /entrypoint.sh
+#COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Use the entrypoint script as the default command
