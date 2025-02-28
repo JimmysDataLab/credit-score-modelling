@@ -1,6 +1,10 @@
 # Base Image
 FROM ubuntu:22.04
-COPY . .
+
+#WORKDIR /app
+RUN mkdir app
+COPY . /app
+
 
 # Install essential binaries
 RUN apt-get update && \
@@ -12,6 +16,7 @@ RUN apt-get update && \
 
 # Set conda directory
 ENV CONDA_HOME=/opt/miniconda
+
 
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p ${CONDA_HOME} && \
@@ -28,9 +33,10 @@ RUN conda init --all && \
     conda update -n base -c defaults conda -y && \
     conda create --name spark_env python=3.11.4 && \
     conda activate spark_env && \
-    pip install -r requirements.txt \
+    pip install -r /app/requirements.txt 
     # mkdir data
 
+ENV PYTHONPATH=/app:${PYTHONPATH}
 # Spark variables
 ENV SPARK_VERSION=3.5.4
 ENV HADOOP_VERSION=3
@@ -41,7 +47,7 @@ ENV PATH=${SPARK_HOME}/bin:${SPARK_HOME}/sbin:$PATH
 
 
 RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-scala${SCALA_VERSION}.tgz" -O /tmp/spark.tgz && \
-    tar -xzf /tmp/spark.tgz -C ./opt && \
+    tar -xzf /tmp/spark.tgz -C /opt && \
     rm /tmp/spark.tgz && \
     mv /opt/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}-scala${SCALA_VERSION} ${SPARK_HOME}
 
@@ -52,11 +58,10 @@ RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${
 #  - 8888: Jupyter Notebook
 EXPOSE 7077 8080 8081 8888
 
-#COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+
+
+RUN chmod +x /app/entrypoint.sh
+
 
 # Use the entrypoint script as the default command
-ENTRYPOINT ["/entrypoint.sh"]
-
-
-
+ENTRYPOINT ["/app/entrypoint.sh"]

@@ -1,3 +1,4 @@
 pyspark==3.5.3
 ucimlrepo==0.0.7
 jupyter
+pyarrow

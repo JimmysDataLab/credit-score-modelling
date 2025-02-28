@@ -30,13 +30,15 @@ services:
     container_name: jupyter
     environment:
       - SPARK_MASTER_URL=spark://spark-master:7077
-      - TRAIN_PATH=/mnt/train
-      - TEST_PATH=/mnt/test
+      - TRAIN_PATH=/app/data/train
+      - TEST_PATH=/app/data/test
     ports:
       - "8888:8888"   # Jupyter Notebook
     volumes:
-      - ./notebooks:/notebooks
-      - ./data:/data
+      - ./notebooks:/app/notebooks
+      - ./utils:/app/utils
+      - ./scripts:/app/scripts
+      - ./data:/app/data
     depends_on:
       - spark-master
       - spark-worker

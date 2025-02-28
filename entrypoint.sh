@@ -30,8 +30,9 @@ elif [ "$SPARK_MODE" = "worker" ]; then
   # Keep the container running by tailing the worker logs
   tail -F $SPARK_HOME/logs/*
 else
-  echo "Downloading Raw Data..."
-  python /scripts/stage_data.py
+  # echo "Downloading Raw Data..."
+  # python /app/scripts/stage_data.py
+
 
   echo "Starting Jupyter Notebook..."
   jupyter notebook \
