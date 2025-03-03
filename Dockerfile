@@ -16,7 +16,7 @@ RUN apt-get update \
 ENV PYTHON_VERSION=3.11.4
 ENV CONDA_HOME=/opt/miniconda
 ENV PATH=${CONDA_HOME}/bin:$PATH
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O /tmp/miniconda.sh && \
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -p ${CONDA_HOME} && \
     rm /tmp/miniconda.sh
 RUN conda init --all && \
@@ -41,7 +41,7 @@ RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${
 ENV HADOOP_VERSION=3.3.5
 ENV HADOOP_HOME=/opt/hadoop
 ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${PATH}
 
 RUN wget --quiet "https://dlcdn.apache.org/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" -O /tmp/hadoop.tar.gz \

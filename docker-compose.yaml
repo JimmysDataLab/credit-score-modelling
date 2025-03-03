@@ -40,34 +40,37 @@ services:
       - my-network
 
 
-  # spark-master:
-  #   build: .
-  #   container_name: spark-master
-  #   environment:
-  #     - SPARK_MODE=master
-  #   ports:
-  #     - "7077:7077"
-  #     - "8080:8080"
-  #   depends_on:
-  #     - namenode
-  #     - datanode1
-  #     - datanode2
-  #   networks:
-  #     - spark-network
+  spark-master:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.spark
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
+    networks:
+      - my-network
   
-  # spark-worker:
-  #   build: .
-  #   environment:
-  #     - SPARK_MODE=worker
-      
-  #     - SPARK_MASTER_URL=spark://spark-master:7077
-  #   depends_on:
-  #     - spark-master
-  #     - namenode
-  #     - datanode1
-  #     - datanode2
-  #   networks:
-  #     - spark-network
+  spark-worker:
+    build: 
+      context: .
+      dockerfile: ./docker/Dockerfile.spark
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+      - namenode
+      - datanode1
+      - datanode2
+    networks:
+      - my-network
 
   # jupyter:
   #   build: .
