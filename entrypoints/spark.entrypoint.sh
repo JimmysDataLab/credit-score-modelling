@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+source "${CONDA_HOME}/bin/activate" spark_env
+
 if [ "$SPARK_MODE" = "master" ]; then
     echo "Starting Spark Master..."
     "${SPARK_HOME}/sbin/start-master.sh"

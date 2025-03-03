@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 
-## Spark version
-ENV SPARK_VERSION=3.5.5
+
 
 COPY ./config/python/requirements.txt /requirements.txt
 COPY ./entrypoints/spark.entrypoint.sh /spark.entrypoint.sh
@@ -18,7 +17,6 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aar
     bash /tmp/miniconda.sh -b -p ${CONDA_HOME} && \
     rm /tmp/miniconda.sh
 
-
 RUN conda init --all && \
     . ~/.bashrc && \
     conda update -n base -c defaults conda -y && \
@@ -26,17 +24,15 @@ RUN conda init --all && \
     conda activate spark_env && \
     pip install -r /requirements.txt 
 
-
-
 # Install Spark
 ENV SPARK_VERSION=3.5.5
 ENV SPARK_HOME=/opt/spark
 ENV PATH=${SPARK_HOME}/bin:${SPARK_HOME}/sbin:$PATH
-RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}.tgz" -O /tmp/spark.tgz \
+RUN wget --quiet "https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz" -O /tmp/spark.tgz \
     && tar -xzf /tmp/spark.tgz -C /opt \
     && rm /tmp/spark.tgz \
-    && mv /opt/spark-${SPARK_VERSION} ${SPARK_HOME}
+    && mv /opt/spark-${SPARK_VERSION}-bin-hadoop3 ${SPARK_HOME}
 
-ENV SPARK_MASTER_URL=spark://spark-master:7077
+
 RUN chmod +x /spark.entrypoint.sh
 ENTRYPOINT ["/spark.entrypoint.sh"]

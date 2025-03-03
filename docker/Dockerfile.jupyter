@@ -1,0 +1,28 @@
+FROM ubuntu:22.04
+
+
+COPY ./app /app
+COPY ./config /config
+COPY ./entrypoints/jupyter.entrypoint.sh /jupyter.entrypoint.sh
+RUN apt-get update \
+    && apt-get install -y wget openjdk-11-jdk vim \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install conda and python environment
+ENV PYTHON_VERSION=3.11.4
+ENV CONDA_HOME=/opt/miniconda
+ENV PATH=${CONDA_HOME}/bin:$PATH
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p ${CONDA_HOME} && \
+    rm /tmp/miniconda.sh
+RUN conda init --all && \
+    . ~/.bashrc && \
+    conda update -n base -c defaults conda -y && \
+    conda create --name spark_env python=${PYTHON_VERSION} && \
+    conda activate spark_env && \
+    pip install -r /config/python/requirements.txt 
+
+
+RUN chmod +x /jupyter.entrypoint.sh
+ENTRYPOINT ["/jupyter.entrypoint.sh"]

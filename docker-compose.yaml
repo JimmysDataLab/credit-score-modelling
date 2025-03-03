@@ -72,28 +72,28 @@ services:
     networks:
       - my-network
 
-  # jupyter:
-  #   build: .
-  #   container_name: jupyter
-  #   environment:
-  #     - SPARK_MASTER_URL=spark://spark-master:7077
-  #     - JUPYTER_ENABLE=enable
-
-  #   ports:
-  #     - "8888:8888"   
-  #   volumes:
-  #     - ./notebooks:/app/notebooks
-  #     - ./utils:/app/utils
-  #     - ./scripts:/app/scripts
-
-  #   depends_on:
-  #     - spark-master
-  #     - spark-worker
-  #     - namenode
-  #     - datanode1
-  #     - datanode2
-  #   networks:
-  #     - spark-network
+  jupyter:
+    build: 
+      context: .
+      dockerfile: ./docker/Dockerfile.jupyter
+    container_name: jupyter
+    environment:
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - HADOOP_MASTER_URL=hdfs://namenode:9000
+      - PYTHONPATH=/app
+    ports:
+      - "8888:8888"  
+    volumes:
+      - ./app:/app
+      - ./config:/config
+    depends_on:
+      - spark-master
+      - spark-worker
+      - namenode
+      - datanode1
+      - datanode2
+    networks:
+      - my-network
 
 volumes:
   hadoop_namenode:

@@ -1,4 +1,5 @@
-pyspark==3.5.3
 ucimlrepo==0.0.7
+pyspark
 jupyter
 pyarrow
+hdfs
