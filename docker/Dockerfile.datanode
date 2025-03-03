@@ -1,0 +1,37 @@
+FROM ubuntu:22.04
+
+## Hadoop version
+ENV HADOOP_VERSION=3.3.5
+
+RUN apt-get update \
+    && apt-get install -y wget openjdk-11-jdk ssh rsync curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
+
+## Can be set in /opt/hadoop/etc/hadoop/hadoop-env.sh
+## Precedence rules:
+## {yarn-env.sh|hdfs-env.sh} > hadoop-env.sh > hard-coded defaults
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
+ENV HADOOP_HOME=/opt/hadoop
+ENV HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
+ENV PATH=${JAVA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin${PATH}
+
+RUN wget --quiet "https://dlcdn.apache.org/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" -O /tmp/hadoop.tar.gz \
+    && tar -xzf /tmp/hadoop.tar.gz -C /opt \
+    && rm /tmp/hadoop.tar.gz \
+    && mv /opt/hadoop-${HADOOP_VERSION} ${HADOOP_HOME} 
+
+COPY ./config/hadoop/core-site.xml ${HADOOP_CONF_DIR}/core-site.xml
+COPY ./config/hadoop/hdfs-site.xml ${HADOOP_CONF_DIR}/hdfs-site.xml
+COPY ./config/hadoop/datanode.entrypoint.sh /datanode.entrypoint.sh
+
+## Check for persistant data from previous runs
+## If not found, format the namenode and start the cluster#
+## Otherwise, start the cluster
+ENV DATANODE_DIR=${HADOOP_HOME}/dfs/data
+RUN chmod +x /datanode.entrypoint.sh
+ENTRYPOINT ["/datanode.entrypoint.sh"]
+
+

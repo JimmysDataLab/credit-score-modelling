@@ -1,50 +1,102 @@
 # version: '3.8'
 
 services:
-  spark-master:
-    build: .
-    container_name: spark-master
-    environment:
-      - SPARK_MODE=master
+  namenode:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.namenode
+    container_name: namenode
+    hostname: namenode
     ports:
-      - "7077:7077"
-      - "8080:8080"
-    networks:
-      - spark-network
-  
-  spark-worker:
-    build: .
-    #container_name: spark-worker
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-    # ports:
-    #   - "8081:8081"
-    depends_on:
-      - spark-master
-    networks:
-      - spark-network
-
-  jupyter:
-    build: .
-    container_name: jupyter
-    environment:
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - TRAIN_PATH=/app/data/train
-      - TEST_PATH=/app/data/test
-    ports:
-      - "8888:8888"   # Jupyter Notebook
+      - "9870:9870"
+      - "9000:9000"
     volumes:
-      - ./notebooks:/app/notebooks
-      - ./utils:/app/utils
-      - ./scripts:/app/scripts
-      - ./data:/app/data
-    depends_on:
-      - spark-master
-      - spark-worker
+      - hadoop_namenode:/opt/hadoop/dfs/name 
     networks:
-      - spark-network
+      - my-network
+
+  datanode1:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.datanode
+    container_name: datanode1
+    volumes:
+      - hadoop_datanode1:/opt/hadoop/dfs/data  
+    depends_on:
+      - namenode
+    networks:
+      - my-network
+
+  datanode2:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.datanode
+    container_name: datanode2
+    volumes:
+      - hadoop_datanode2:/opt/hadoop/dfs/data  
+    depends_on:
+      - namenode
+    networks:
+      - my-network
+
+
+  # spark-master:
+  #   build: .
+  #   container_name: spark-master
+  #   environment:
+  #     - SPARK_MODE=master
+  #   ports:
+  #     - "7077:7077"
+  #     - "8080:8080"
+  #   depends_on:
+  #     - namenode
+  #     - datanode1
+  #     - datanode2
+  #   networks:
+  #     - spark-network
+  
+  # spark-worker:
+  #   build: .
+  #   environment:
+  #     - SPARK_MODE=worker
+      
+  #     - SPARK_MASTER_URL=spark://spark-master:7077
+  #   depends_on:
+  #     - spark-master
+  #     - namenode
+  #     - datanode1
+  #     - datanode2
+  #   networks:
+  #     - spark-network
+
+  # jupyter:
+  #   build: .
+  #   container_name: jupyter
+  #   environment:
+  #     - SPARK_MASTER_URL=spark://spark-master:7077
+  #     - JUPYTER_ENABLE=enable
+
+  #   ports:
+  #     - "8888:8888"   
+  #   volumes:
+  #     - ./notebooks:/app/notebooks
+  #     - ./utils:/app/utils
+  #     - ./scripts:/app/scripts
+
+  #   depends_on:
+  #     - spark-master
+  #     - spark-worker
+  #     - namenode
+  #     - datanode1
+  #     - datanode2
+  #   networks:
+  #     - spark-network
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode1:
+  hadoop_datanode2:
 
 networks:
-  spark-network:
+  my-network:
     driver: bridge
