@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 ENV SPARK_VERSION=3.5.5
 
 COPY ./config/python/requirements.txt /requirements.txt
-COPY ./config/spark/spark.entrypoint.sh /spark.entrypoint.sh
+COPY ./entrypoints/spark.entrypoint.sh /spark.entrypoint.sh
 
 RUN apt-get update \
     && apt-get install -y wget openjdk-11-jdk ssh rsync curl \

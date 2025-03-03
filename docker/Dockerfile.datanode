@@ -25,7 +25,7 @@ RUN wget --quiet "https://dlcdn.apache.org/hadoop/core/hadoop-${HADOOP_VERSION}/
 
 COPY ./config/hadoop/core-site.xml ${HADOOP_CONF_DIR}/core-site.xml
 COPY ./config/hadoop/hdfs-site.xml ${HADOOP_CONF_DIR}/hdfs-site.xml
-COPY ./config/hadoop/datanode.entrypoint.sh /datanode.entrypoint.sh
+COPY ./entrypoints/datanode.entrypoint.sh /datanode.entrypoint.sh
 
 ## Check for persistant data from previous runs
 ## If not found, format the namenode and start the cluster#
