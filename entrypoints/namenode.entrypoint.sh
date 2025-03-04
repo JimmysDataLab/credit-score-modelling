@@ -8,7 +8,7 @@ if [ ! -f ${NAMENODE_DIR}/current/VERSION ]; then
     echo "Formatting NameNode since metadata is missing..."
     hadoop namenode -format -force
     echo "Making namenode directory..."
-    mkdir -p ${NAMENODE_DIR}
+    #mkdir -p ${NAMENODE_DIR}
 else
     echo "NameNode already formatted. Skipping format."
 fi

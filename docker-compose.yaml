@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.namenode
     container_name: namenode
+    environment:
+      - NAMENODE_DIR=/opt/hadoop/dfs/name
     hostname: namenode
     ports:
       - "9870:9870"
@@ -62,7 +64,6 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.spark
     environment:
-      - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark-master:7077
     depends_on:
       - spark-master
@@ -81,6 +82,9 @@ services:
       - SPARK_MASTER_URL=spark://spark-master:7077
       - HADOOP_MASTER_URL=hdfs://namenode:9000
       - PYTHONPATH=/app
+      - TRAIN_PATH=/data/train
+      - TEST_PATH=/data/test
+      - MODEL_PATH=/model
     ports:
       - "8888:8888"  
     volumes:

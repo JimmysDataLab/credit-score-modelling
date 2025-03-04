@@ -30,7 +30,7 @@ COPY ./entrypoints/namenode.entrypoint.sh /namenode.entrypoint.sh
 ## Check for persistant data from previous runs
 ## If not found, format the namenode and start the cluster
 ## Otherwise, start the cluster
-ENV NAMENODE_DIR=${HADOOP_HOME}/dfs/name
+# NAMENODE_DIR=${HADOOP_HOME}/dfs/name
 RUN chmod +x /namenode.entrypoint.sh
 ENTRYPOINT ["/namenode.entrypoint.sh"]
 
