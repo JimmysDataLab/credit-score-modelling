@@ -64,6 +64,7 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile.spark
     environment:
+      - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark-master:7077
     depends_on:
       - spark-master
